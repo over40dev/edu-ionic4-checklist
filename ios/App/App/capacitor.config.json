@@ -1,0 +1,7 @@
+{
+  "appId": "io.over40dev.checklists",
+  "appName": "checklists",
+  "bundledWebRuntime": false,
+  "npmClient": "npm",
+  "webDir": "www"
+}

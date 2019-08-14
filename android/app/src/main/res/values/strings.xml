@@ -1,0 +1,8 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">checklists</string>
+    <string name="title_activity_main">checklists</string>
+    <string name="package_name">io.over40dev.checklists</string>
+    <string name="fileprovider_authority">io.over40dev.checklists.fileprovider</string>
+    <string name="custom_url_scheme">io.over40dev.checklists</string>
+</resources>
