@@ -1,4 +1,7 @@
-import { Component } from '@angular/core';
+import { Component, ViewChild, OnInit } from '@angular/core';
+import { AlertController, IonList, NavController } from '@ionic/angular';
+import { ChecklistDataService } from '../services/checklist-data.service';
+import { Checklist } from '../interfaces/checklists';
 
 @Component({
   selector: 'app-home',
@@ -7,6 +10,7 @@ import { Component } from '@angular/core';
 })
 export class HomePage {
 
-  constructor() {}
+  constructor(public dataService: ChecklistDataService) {
+  }
 
 }
