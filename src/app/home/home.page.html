@@ -14,14 +14,10 @@
 <ion-content>
   <ion-list lines="none">
       <ion-item-sliding *ngFor="let checklist of dataService?.checklists">
-        <ion-item routerLink="/checklists/123" routerDirection="forward">
-          <ion-label>Title goes here... </ion-label>
-          <span>0 items</span>
-        </ion-item>
-        <!-- <ion-item [routerLink]="'/checklists/'+checklist.id" routerDirection="forward">
+        <ion-item [routerLink]="'/checklists/'+checklist.id" routerDirection="forward">
           <ion-label>{{checklist?.title}}</ion-label>
           <span>{{checklist?.items.length}} items</span>
-        </ion-item> -->
+        </ion-item>
 
         <ion-item-options side="end">
           <ion-item-option color="light" expandable (click)="renameChecklist(checklist)"><ion-icon slot="icon-only" name="clipboard"></ion-icon></ion-item-option>
