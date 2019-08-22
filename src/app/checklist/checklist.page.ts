@@ -85,6 +85,12 @@ export class ChecklistPage implements OnInit {
           }
         }
       ]
+    })
+    .then((prompt) => {
+      prompt.present();
+    })
+    .then(() => {
+      this.slidingList.closeSlidingItems();
     });
   }
 
