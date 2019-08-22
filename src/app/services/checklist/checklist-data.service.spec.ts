@@ -1,6 +1,6 @@
 import { TestBed } from '@angular/core/testing';
 
-import { ChecklistDataService } from './checklist-data.service';
+import { ChecklistDataService } from '../checklist/checklist-data.service';
 
 describe('ChecklistDataService', () => {
   beforeEach(() => TestBed.configureTestingModule({}));

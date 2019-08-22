@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { Plugins } from '@capacitor/core';
-import { ChecklistDataService } from './services/checklist-data.service';
+import { ChecklistDataService } from './services/checklist/checklist-data.service';
 
 const {SplashScreen, StatusBar} = Plugins;
 
@@ -13,7 +13,8 @@ export class AppComponent {
   constructor(
     private dataService: ChecklistDataService
   ) {
-    this.dataService.load();
+    console.log('go load lists');
+    this.dataService.loadChecklists();
 
     SplashScreen.hide().catch((err) => {
       console.warn(err);
@@ -24,6 +25,5 @@ export class AppComponent {
     });
 
   }
-
 
 }
