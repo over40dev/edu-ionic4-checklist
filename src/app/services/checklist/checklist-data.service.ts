@@ -1,7 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Storage } from '@ionic/storage';
 import { Checklist, ChecklistItem } from '../../interfaces/checklists';
-import { ChecklistitemDataService } from './checklistitem-data.service';
 
 @Injectable({
   providedIn: 'root',
@@ -10,13 +9,19 @@ export class ChecklistDataService {
   public checklists: Checklist[] = [];
   public loaded = false;
 
-  constructor(
-    private storage: Storage,
-    private dataService: ChecklistitemDataService,
-  ) {}
+  constructor(private storage: Storage) {}
 
   loadChecklists(): Promise<boolean> {
-    return Promise.resolve(true);
+    return new Promise(resolve => {
+      this.storage.get('checklists').then(checklists => {
+        if (checklists !== null) {
+          this.checklists = checklists;
+        }
+
+        this.loaded = true;
+        resolve(true);
+      });
+    });
   }
 
   createChecklist(data) {
@@ -33,6 +38,7 @@ export class ChecklistDataService {
     const index = this.checklists.indexOf(checklist);
     if (index > -1) {
       this.checklists[index].title = data.name;
+
       this.save();
     }
   }
@@ -41,6 +47,7 @@ export class ChecklistDataService {
     const index = this.checklists.indexOf(checklist);
     if (index > -1) {
       this.checklists.splice(index, 1);
+
       this.save();
     }
   }
@@ -49,43 +56,49 @@ export class ChecklistDataService {
     return this.checklists.find(checklist => checklist.id === id);
   }
 
-  /*
-   Implementation of Checklist Items are in separate file reference in imports.
-  */
+  addItem(id: string, data?: any) {
+    console.log('addItem', id, data);
+    this.getChecklist(id).items.push({
+      title: data.name,
+      checked: false,
+    });
 
-  async addItem(checklist: Checklist, item: ChecklistItem) {
-    await this.dataService.addItem(checklist, item);
     this.save();
   }
 
-  async removeItem(checklist: Checklist, item: ChecklistItem) {
-    await this.dataService.removeItem(checklist, item);
+  removeItem(checklist: Checklist, item: ChecklistItem) {
+    const index: number = checklist.items.indexOf(item);
+    if (index > -1) {
+      checklist.items.splice(index, 1);
+
+      this.save();
+    }
+  }
+
+  renameItem(item: ChecklistItem, newName: string) {
+    item.title = newName;
+
     this.save();
   }
 
-  async renameItem(item: ChecklistItem, newName: string) {
-    await this.dataService.renameItem(item, newName);
+  toggleItem(item: ChecklistItem) {
+    item.checked = !item.checked;
+
     this.save();
   }
 
-  async toggleItem(item: ChecklistItem) {
-    await this.dataService.toggleItem(item);
-    this.save();
-  }
-
-  async save() {
-    await this.storage.set('checklists', this.checklists);
+  save() {
+    this.storage.set('checklists', this.checklists);
   }
 
   private generateSlug(title): string {
-
     // NOTE: This is a simplistic slug generator and will not handle things like special characters.
     const slug: string = title.toLowerCase().replace(/\s+/g, '-');
     // check for uniqueness of slug
-    const exists = this.checklists
-      .filter(checklist =>
-        checklist.id.substring(0, slug.length) === slug);
-      // If the title is already being used, add a number to make the slug unique
+    const exists = this.checklists.filter(
+      checklist => checklist.id.substring(0, slug.length) === slug
+    );
+    // If the title is already being used, add a number to make the slug unique
     return exists.length > 0 ? slug + exists.length.toString() : slug;
   }
 }

@@ -2,7 +2,7 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 import { IonList, AlertController } from '@ionic/angular';
 import { Checklist, ChecklistItem } from '../interfaces/checklists';
 import { ActivatedRoute } from '@angular/router';
-import { ChecklistDataService } from '../services';
+import { ChecklistDataService } from '../services/checklist/checklist-data.service';
 
 @Component({
   selector: 'app-checklist',
@@ -23,10 +23,7 @@ export class ChecklistPage implements OnInit {
 
   ngOnInit() {
     this.slug = this.route.snapshot.paramMap.get('id');
-    this.loadCheckList();
-  }
 
-  loadCheckList() {
     if (this.dataService.loaded) {
       this.checklist = this.dataService.getChecklist(this.slug);
     } else {
@@ -36,8 +33,8 @@ export class ChecklistPage implements OnInit {
     }
   }
 
-  async addChecklist() {
-    const itemDialong = await this.alertCtrl.create({
+  addItem() {
+    const itemDialong = this.alertCtrl.create({
       header: 'Add Item',
       message: 'Enter the name the task for this checklist',
       inputs: [
@@ -50,30 +47,49 @@ export class ChecklistPage implements OnInit {
         {
           text: 'Save',
           handler: data => {
-            console.log('additem', data);
-            this.dataService.addItem(this.checklist, data);
+            console.log('additem', data, typeof data);
+            this.dataService.addItem(this.checklist.id, data);
           },
         },
       ],
+    }).then((prompt) => {
+      prompt.present();
     });
-
-    await itemDialong.present();
   }
 
   removeItem(item: ChecklistItem) {
-    const index = this.checklist.items.indexOf(item);
-    if (index > -1) {
-      this.dataService.removeItem(this.checklist, item);
-    }
+    this.slidingList.closeSlidingItems()
+      .then(() => {
+        this.dataService.removeItem(this.checklist, item);
+      });
   }
 
   renameItem(item: ChecklistItem) {
-    console.log('rename', item);
-    // this.dataService.renameItem(item);
+    this.alertCtrl.create({
+      header: 'Rename Item',
+      message: 'Enter the new name of the task for this checklist below',
+      inputs: [
+        {
+          type: 'text',
+          name: 'name'
+        }
+      ],
+      buttons: [
+        {
+          text: 'Cancel'
+        },
+        {
+          text: 'Save',
+          handler: (data) => {
+            this.dataService.renameItem(item, data.name);
+          }
+        }
+      ]
+    });
   }
 
   toggleItem(item: ChecklistItem) {
+    this.dataService.toggleItem(item);
     console.log('toggItem', item);
-    // this.dataService.toggleItem(item);
   }
 }

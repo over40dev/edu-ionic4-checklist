@@ -1,7 +1,7 @@
 import { Component, ViewChild, OnInit } from '@angular/core';
 import { AlertController, IonList, NavController } from '@ionic/angular';
 import { Storage } from '@ionic/storage';
-import { ChecklistDataService } from '../services';
+import { ChecklistDataService } from '../services/checklist/checklist-data.service';
 import { Checklist } from '../interfaces/checklists';
 
 @Component({
@@ -32,8 +32,8 @@ export class HomePage implements OnInit {
       });
   }
 
-  async addChecklist() {
-    const alert = await this.alertCtrl.create({
+  addChecklist() {
+    const alert = this.alertCtrl.create({
       header: 'New Checklist',
       message: 'Enter the name of your new Checklist below:',
       inputs: [
@@ -48,20 +48,23 @@ export class HomePage implements OnInit {
         },
         {
           text: 'Save',
-          handler: this.createChecklist
+          handler: (data) => {
+            this.dataService.createChecklist(data);
+          }
         }
       ]
+    }).then((prompt) => {
+      prompt.present();
     });
-
-    await alert.present();
   }
 
-  async createChecklist(data) {
-    await this.dataService.createChecklist(data);
+  createChecklist(data) {
+    console.log('new', data);
+    this.dataService.createChecklist(data);
   }
 
-  async renameChecklist(checklist) {
-    const alert = await this.alertCtrl.create({
+  renameChecklist(checklist) {
+    const alert = this.alertCtrl.create({
       header: 'Rename Checklist',
       message: 'Enter the new name of this checklist below:',
       inputs: [{
@@ -79,13 +82,14 @@ export class HomePage implements OnInit {
           }
         }
       ]
+    }).then((prompt) => {
+      prompt.present();
     });
-    await alert.present();
   }
 
-  async removeChecklist(checklist) {
-    const list = await this.slidingList.closeSlidingItems();
+  removeChecklist(checklist) {
+    const list = this.slidingList.closeSlidingItems();
 
-    await this.dataService.removeChecklist(checklist);
+    this.dataService.removeChecklist(checklist);
   }
 }
